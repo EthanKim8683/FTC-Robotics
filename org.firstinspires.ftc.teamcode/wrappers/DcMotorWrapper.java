@@ -12,12 +12,12 @@ public class DcMotorWrapper {
   private double _reversePower = 0.5;
   private boolean _isBusy = false;
   private boolean _isAsync = false;
-  private EventHandlerManager becomeBusyEventHandlerManager;
-  private EventHandlerManager becomeIdleEventHandlerManager;
+  private EventManager becomeBusyEventManager;
+  private EventManager becomeIdleEventManager;
   
   public DcMotorWrapper() {
-    this.becomeBusyEventHandlerManager = new EventHandlerManager();
-    this.becomeIdleEventHandlerManager = new EventHandlerManager();
+    this.becomeBusyEventManager = new EventManager();
+    this.becomeIdleEventManager = new EventManager();
   }
   
   public DcMotorWrapper setDcMotor(DcMotor dcMotor) {
@@ -33,6 +33,12 @@ public class DcMotorWrapper {
   }
   
   public DcMotorWrapper setUpperBound(int upperBound) {
+    this._upperBound = upperBound;
+    return this;
+  }
+
+  public DcMotorWrapper setRange(int lowerBound, int upperBound) {
+    this._lowerBound = lowerBound;
     this._upperBound = upperBound;
     return this;
   }
@@ -70,30 +76,25 @@ public class DcMotorWrapper {
     return this;
   }
 
-  public DcMotorWrapper subscribeBecomeBusyEvent(EventHandler eventHandler) {
-    this.becomeBusyEventHandlerManager.subscribe(eventHandler);
+  public DcMotorWrapper subscribeBecomeBusyEvent(EventManager.EventHandler eventHandler) {
+    this.becomeBusyEventManager.subscribe(eventHandler);
     return this;
   }
 
-  public DcMotorWrapper subscribeBecomeIdleEvent(EventHandler eventHandler) {
-    this.becomeIdleEventHandlerManager.subscribe(eventHandler);
+  public DcMotorWrapper subscribeBecomeIdleEvent(EventManager.EventHandler eventHandler) {
+    this.becomeIdleEventManager.subscribe(eventHandler);
     return this;
   }
 
-  public AsyncBody gotoPosition(double weight) {
-    return next -> {
+  public Async.AsyncBody gotoPosition(double weight) {
+    return async -> {
       this.setPosition(weight);
       this._isAsync = true;
-      EventHandler becomeBusy = () -> {
-        EventHandler becomeIdle = () -> {
-          this._isAsync = false;
-          next.execute();
-          return true;
-        };
-        this.subscribeBecomeIdleEvent(becomeIdle);
+      this.subscribeBecomeIdleEvent(() -> {
+        this._isAsync = false;
+        async.finish();
         return true;
-      };
-      this.subscribeBecomeBusyEvent(becomeBusy);
+      });
     };
   }
 
@@ -139,8 +140,8 @@ public class DcMotorWrapper {
 
   private void updateIsBusy() {
     boolean nowBusy = this._dcMotor.isBusy();
-    if (!this._isBusy && nowBusy) this.becomeBusyEventHandlerManager.execute();
-    if (this._isBusy && !nowBusy) this.becomeIdleEventHandlerManager.execute();
+    if (!this._isBusy && nowBusy) this.becomeBusyEventManager.execute();
+    if (this._isBusy && !nowBusy) this.becomeIdleEventManager.execute();
     this._isBusy = nowBusy;
   }
   

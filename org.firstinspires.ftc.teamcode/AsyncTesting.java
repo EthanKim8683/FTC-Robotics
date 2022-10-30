@@ -27,6 +27,7 @@ public class AsyncTesting extends LinearOpMode {
   ServoWrapper linearServo;
   ServoWrapper rightArm;
 
+  // Gamepads
   GamepadWrapper gamepad1;
   
   // Claw control limits
@@ -134,14 +135,16 @@ public class AsyncTesting extends LinearOpMode {
   }
   
   public void initAll() {
+    telemetry.addData("Status", "Initializing all");
+    telemetry.update();
+
+    // Initialize everything
     this.initControlHub();
     this.initExpansionHub();
     this.initGamepads();
     
     telemetry.addData("Status", "Initialized all");
     telemetry.update();
-    
-    waitForStart();
   }
   
   private void updateAll() {
@@ -175,6 +178,7 @@ public class AsyncTesting extends LinearOpMode {
   @Override
   public void runOpMode() throws InterruptedException {
     this.initAll();
+    waitForStart();
 
     if (isStopRequested()) return;
     

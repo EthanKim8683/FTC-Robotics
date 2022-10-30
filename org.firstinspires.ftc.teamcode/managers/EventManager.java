@@ -2,11 +2,15 @@ package org.firstinspires.ftc.teamcode;
 
 import java.util.ArrayList;
 
-public class EventHandlerManager {
+public class EventManager {
   private ArrayList<EventHandler> eventHandlers;
 
-  public EventHandlerManager() {
+  public EventManager() {
     this.eventHandlers = new ArrayList<EventHandler>();
+  }
+
+  public interface EventHandler {
+    public boolean execute();
   }
 
   public void subscribe(EventHandler eventHandler) {
