@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.hardware.Servo;
 
 public class ServoWrapper {
+  private static TimeManager timeManager;
+
   private Servo _servo;
   private double _position = 0.0;
   private double _lowerBound = 0.0;
@@ -10,6 +12,10 @@ public class ServoWrapper {
   private boolean _isAsync = false;
   
   public ServoWrapper() {}
+
+  public static void setTimeManager(TimeManager timeManager) {
+    ServoWrapper.timeManager = timeManager;
+  }
   
   public ServoWrapper setServo(Servo servo) {
     this._servo = servo;
@@ -18,13 +24,11 @@ public class ServoWrapper {
   
   public ServoWrapper setLowerBound(double lowerBound) {
     this._lowerBound = lowerBound;
-    this._servo.scaleRange(this._lowerBound, this._upperBound);
     return this;
   }
   
   public ServoWrapper setUpperBound(double upperBound) {
     this._upperBound = upperBound;
-    this._servo.scaleRange(this._lowerBound, this._upperBound);
     return this;
   }
 
@@ -36,15 +40,19 @@ public class ServoWrapper {
   }
 
   public ServoWrapper setPosition(double weight) {
-    this._servo.setPosition(weight);
+    double targetPosition = MathUtil.applyWeight(this._lowerBound, this._upperBound, weight);
+    this._servo.setPosition(targetPosition);
     return this;
   }
 
-  public Async.AsyncBody gotoPosition(double weight) {
+  public Async.AsyncBody gotoPosition(double weight, double time) {
     return async -> {
       this.setPosition(weight);
       this._isAsync = true;
-      // Servo wait code here!
+      ServoWrapper.timeManager.subscribeTimeEvent(time, () -> {
+        this._isAsync = false;
+        async.finish();
+      });
     };
   }
 
@@ -67,4 +75,6 @@ public class ServoWrapper {
   public double getPosition() {
     return this._position;
   }
+
+  public void update() {}
 }

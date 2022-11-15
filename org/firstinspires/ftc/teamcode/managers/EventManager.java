@@ -9,7 +9,7 @@ public class EventManager {
     this.eventHandlers = new ArrayList<EventHandler>();
   }
 
-  public interface EventHandler {
+  public static interface EventHandler {
     public boolean execute();
   }
 

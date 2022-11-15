@@ -23,7 +23,7 @@ public class Async {
     this.standby();
   }
   
-  public interface AsyncBody {
+  public static interface AsyncBody {
     public void execute(Async async);
   }
 

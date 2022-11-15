@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 public class DcMotorWrapper {
+  private static TimeManager timeManager;
+
   private DcMotor _dcMotor;
   private int _position = 0;
   private int _targetPosition = 0;
@@ -19,12 +21,22 @@ public class DcMotorWrapper {
     this.becomeBusyEventManager = new EventManager();
     this.becomeIdleEventManager = new EventManager();
   }
+
+  public static void setTimeManager(TimeManager timeManager) {
+    DcMotorWrapper.timeManager = timeManager;
+  }
   
-  public DcMotorWrapper setDcMotor(DcMotor dcMotor) {
+  public DcMotorWrapper setDcMotor(DcMotor dcMotor, boolean usingEncoder) {
     this._dcMotor = dcMotor;
-    dcMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-    dcMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    if (usingEncoder) {
+      dcMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+      dcMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
     return this;
+  }
+
+  public DcMotorWrapper setDcMotor(DcMotor dcMotor) {
+    return this.setDcMotor(dcMotor, true);
   }
   
   public DcMotorWrapper setLowerBound(int lowerBound) {
@@ -53,6 +65,12 @@ public class DcMotorWrapper {
     return this;
   }
 
+  public DcMotorWrapper setPowers(double forwardPower, double reversePower) {
+    this._forwardPower = forwardPower;
+    this._reversePower = reversePower;
+    return this;
+  }
+
   public DcMotorWrapper setPower(double power) {
     this._forwardPower = power;
     this._reversePower = power;
@@ -60,7 +78,7 @@ public class DcMotorWrapper {
   }
 
   public DcMotorWrapper setPosition(double weight) {
-    int targetPosition = Helper.applyWeight(this._lowerBound, this._upperBound, weight);
+    int targetPosition = MathUtil.applyWeight(this._lowerBound, this._upperBound, weight);
     double power = 0.0;
     if (targetPosition > this._position) power = this._forwardPower;
     if (targetPosition < this._position) power = this._reversePower;
@@ -71,8 +89,13 @@ public class DcMotorWrapper {
     return this;
   }
 
-  public DcMotorWrapper setPosition(int position) {
-    this._dcMotor.setTargetPosition(position);
+  public DcMotorWrapper setPosition(int targetPosition) {
+    double power = 0.0;
+    if (targetPosition > this._position) power = this._forwardPower;
+    if (targetPosition < this._position) power = this._reversePower;
+    this._dcMotor.setTargetPosition(targetPosition);
+    this._dcMotor.setPower(power);
+    this._dcMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     return this;
   }
 
@@ -94,6 +117,40 @@ public class DcMotorWrapper {
         this._isAsync = false;
         async.finish();
         return true;
+      });
+    };
+  }
+
+  public Async.AsyncBody gotoPosition(double weight, double time) {
+    return async -> {
+      this.setPosition(weight);
+      this._isAsync = true;
+      DcMotorWrapper.timeManager.subscribeTimeEvent(time, () -> {
+        this._isAsync = false;
+        async.finish();
+      });
+    };
+  }
+
+  public Async.AsyncBody gotoPosition(int weight) {
+    return async -> {
+      this.setPosition(weight);
+      this._isAsync = true;
+      this.subscribeBecomeIdleEvent(() -> {
+        this._isAsync = false;
+        async.finish();
+        return true;
+      });
+    };
+  }
+
+  public Async.AsyncBody gotoPosition(int weight, double time) {
+    return async -> {
+      this.setPosition(weight);
+      this._isAsync = true;
+      DcMotorWrapper.timeManager.subscribeTimeEvent(time, () -> {
+        this._isAsync = false;
+        async.finish();
       });
     };
   }

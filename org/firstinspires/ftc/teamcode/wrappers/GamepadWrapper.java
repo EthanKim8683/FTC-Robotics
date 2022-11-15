@@ -12,6 +12,8 @@ public class GamepadWrapper {
   private boolean _isLPressed = false;
   private boolean _isRPressed = false;
   private boolean _isUPressed = false;
+  private boolean _isLbPressed = false;
+  private boolean _isRbPressed = false;
   private EventManager aPressedEventManager;
   private EventManager bPressedEventManager;
   private EventManager xPressedEventManager;
@@ -28,6 +30,10 @@ public class GamepadWrapper {
   private EventManager lReleasedEventManager;
   private EventManager rReleasedEventManager;
   private EventManager uReleasedEventManager;
+  private EventManager lbPressedEventManager;
+  private EventManager rbPressedEventManager;
+  private EventManager lbReleasedEventManager;
+  private EventManager rbReleasedEventManager;
 
   public GamepadWrapper() {
     this.aPressedEventManager = new EventManager();
@@ -46,6 +52,10 @@ public class GamepadWrapper {
     this.lReleasedEventManager = new EventManager();
     this.rReleasedEventManager = new EventManager();
     this.uReleasedEventManager = new EventManager();
+    this.lbPressedEventManager = new EventManager();
+    this.rbPressedEventManager = new EventManager();
+    this.lbReleasedEventManager = new EventManager();
+    this.rbReleasedEventManager = new EventManager();
   }
 
   public GamepadWrapper setGamepad(Gamepad gamepad) {
@@ -133,6 +143,26 @@ public class GamepadWrapper {
     return this;
   }
 
+  public GamepadWrapper subscribeLbPressedEvent(EventManager.EventHandler eventHandler) {
+    this.lbPressedEventManager.subscribe(eventHandler);
+    return this;
+  }
+
+  public GamepadWrapper subscribeRbPressedEvent(EventManager.EventHandler eventHandler) {
+    this.rbPressedEventManager.subscribe(eventHandler);
+    return this;
+  }
+
+  public GamepadWrapper subscribeLbReleasedEvent(EventManager.EventHandler eventHandler) {
+    this.lbReleasedEventManager.subscribe(eventHandler);
+    return this;
+  }
+
+  public GamepadWrapper subscribeRbReleasedEvent(EventManager.EventHandler eventHandler) {
+    this.rbReleasedEventManager.subscribe(eventHandler);
+    return this;
+  }
+
   public Gamepad getGamepad() {
     return this._gamepad;
   }
@@ -167,6 +197,14 @@ public class GamepadWrapper {
 
   public boolean isUPressed() {
     return this._isUPressed;
+  }
+
+  public boolean isLbPressed() {
+    return this._isLbPressed;
+  }
+
+  public boolean isRbPressed() {
+    return this._isRbPressed;
   }
 
   private void updateLeftButtons() {
@@ -206,9 +244,21 @@ public class GamepadWrapper {
     this._isXPressed = nowXPressed;
     this._isYPressed = nowYPressed;
   }
+
+  private void updateBumpers() {
+    boolean nowLbPressed = this._gamepad.left_bumper;
+    boolean nowRbPressed = this._gamepad.right_bumper;
+    if (!this._isLbPressed && nowLbPressed) this.lbPressedEventManager.execute();
+    if (!this._isRbPressed && nowRbPressed) this.rbPressedEventManager.execute();
+    if (this._isLbPressed && !nowLbPressed) this.lbReleasedEventManager.execute();
+    if (this._isRbPressed && !nowRbPressed) this.rbReleasedEventManager.execute();
+    this._isLbPressed = nowLbPressed;
+    this._isRbPressed = nowRbPressed;
+  }
   
   public void update() {
     this.updateLeftButtons();
     this.updateRightButtons();
+    this.updateBumpers();
   }
 }

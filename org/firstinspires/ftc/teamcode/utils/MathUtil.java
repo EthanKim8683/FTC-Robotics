@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
-public class Helper {
+public class MathUtil {
   public static double EPSILON = 0.01;
 
   public static double clamp(double x, double minVal, double maxVal) {
@@ -8,12 +8,12 @@ public class Helper {
   }
   
   public static double applyWeight(double edge0, double edge1, double weight) {
-    weight = Helper.clamp(weight, 0.0, 1.0);
+    weight = MathUtil.clamp(weight, 0.0, 1.0);
     return edge0 * (1.0 - weight) + edge1 * weight;
   }
   
   public static int applyWeight(int edge0, int edge1, double weight) {
-    return (int) Helper.applyWeight((double) edge0, (double) edge1, weight);
+    return (int) MathUtil.applyWeight((double) edge0, (double) edge1, weight);
   }
 
   public static double getWeight(double edge0, double edge1, double value) {

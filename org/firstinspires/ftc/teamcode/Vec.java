@@ -159,4 +159,17 @@ public class Vec {
   public static Vec mix(Vec a, Vec b, Vec w) throws Vec.DimMismatchException {
     return Vec.add(Vec.mul(a, Vec.sub(1.0, w)), Vec.mul(b, w));
   }
+
+  public static void checkDims(Vec[] points) throws Vec.DimMismatchException {
+    int dim = points[0].getDim();
+    for (int i = 1; i < points.length; i++) if (points[i].getDim() != dim) throw new Vec.DimMismatchException();
+  }
+
+  public static double[] buildPrefixes(Vec[] points) throws Vec.DimMismatchException {
+    int count = points.length - 1;
+    double[] prefixes = new double[count + 1];
+    for (int i = 0; i < count; i++) prefixes[i + 1] = Vec.distance(points[i], points[i + 1]);
+    for (int i = 0; i < count; i++) prefixes[i + 1] += prefixes[i];
+    return prefixes;
+  }
 }

@@ -7,6 +7,7 @@ public class TimeManager {
   private ArrayList<Double> times;
   private ArrayList<TimeHandler> timeHandlers;
   private double time;
+  private double timeDelta;
   private OpMode opMode;
 
   public TimeManager() {
@@ -14,8 +15,13 @@ public class TimeManager {
     this.timeHandlers = new ArrayList<TimeHandler>();
   }
 
-  public interface TimeHandler {
+  public static interface TimeHandler {
     public void execute();
+  }
+
+  public TimeManager setOpMode(OpMode opMode) {
+    this.opMode = opMode;
+    return this;
   }
 
   public void subscribeTimeEvent(double time, TimeHandler timeHandler) {
@@ -23,15 +29,30 @@ public class TimeManager {
     this.timeHandlers.add(timeHandler);
   }
 
+  public OpMode getOpMode() {
+    return this.opMode;
+  }
+
+  public double getTime() {
+    return this.time;
+  }
+
+  public double getTimeDelta() {
+    return this.timeDelta;
+  }
+
   public void update() {
     double nowTime = opMode.time;
     for (int i = timeHandlers.size() - 1; i >= 0; i--) {
-      TimeHandler timeHandler = timeHandlers.get(i);
-      timeHandler.execute();
-      if (times.get(i) < nowTime){
+      double time = this.times.get(i);
+      TimeHandler timeHandler = this.timeHandlers.get(i);
+      if (time < nowTime){
+        timeHandler.execute();
         this.times.remove(i);
         this.timeHandlers.remove(i);
       }
     }
+    this.timeDelta = nowTime - this.time;
+    this.time = nowTime;
   }
 }
