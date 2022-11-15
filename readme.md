@@ -88,7 +88,7 @@ example.execute();
 
 ### EventManager.EventHandler: Basic event handler
 
-Initialization
+Initialization:
 ```java
 // You will rarely encounter this feature on its own, but
 // here it is for the sake of thoroughness:
@@ -126,7 +126,11 @@ GamepadWrapper gamepadWrapperExample = new GamepadWrapper()
 
 ### OdometryWrapper.PoseEventHandler: Pose event handler
 
+Initializaion:
 ```java
+// Note: PoseEventHandler has not been fully tested yet.
+// use at your own risk!
+
 // You will also rarely encounter this feature on its
 // own, but here it is for the sake of thoroughness:
 OdometryWrapper.PoseEventHandler example = (x, y, r) -> {
@@ -150,7 +154,7 @@ OdometryWrapper odometryWrapperExample = new GamepadWrapper()
   .setFrontEncoder(hardwareMap.dcMotor.get("FrontEncoder"))
   .subscribePoseEvent((x, y, r) -> {
     if (x > 60.0) return true;
-    telemetry.addData("Status", "Hello from a GamepadWrapper EventHandler!");
+    telemetry.addData("Status", "Hello from a PoseEventHandler!");
     telemetry.update();
     return false;
   });
@@ -158,6 +162,7 @@ OdometryWrapper odometryWrapperExample = new GamepadWrapper()
 
 ### TimeManager.TimeEventHandler: Time event handler
 
+Initializaion:
 ```java
 // Currently there are no ways to access the
 // TimeEventHandler directly + may be due for refactoring
