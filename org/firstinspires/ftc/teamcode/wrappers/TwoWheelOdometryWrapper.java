@@ -88,6 +88,18 @@ public class TwoWheelOdometryWrapper {
     public double getPerpOffset() {
         return this._perpOffset;
     }
+    
+    public double getX() {
+        return this._x;
+    }
+    
+    public double getY() {
+        return this._y;
+    }
+    
+    public double getR() {
+        return this._r;
+    }
 
     private void updateParaEncoder() {
         int nowParaEncoderPosition = this._paraEncoder.getCurrentPosition();
