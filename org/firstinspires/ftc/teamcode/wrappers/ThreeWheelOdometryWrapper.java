@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import java.util.ArrayList;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-public class OdometryWrapper {
+public class ThreeWheelOdometryWrapper {
   private static double INCHES_TO_TICKS = 1901.86;
 
   private DcMotor _leftEncoder;
@@ -22,7 +22,7 @@ public class OdometryWrapper {
   private double _r;
   private ArrayList<PoseEventHandler> poseEventHandlers;
   
-  public OdometryWrapper() {
+  public ThreeWheelOdometryWrapper() {
     this._x = 0.0;
     this._y = 0.0;
     this._r = 0.0;
@@ -33,38 +33,38 @@ public class OdometryWrapper {
     public boolean execute(double x, double y, double r);
   }
   
-  public OdometryWrapper setLeftEncoder(DcMotor encoder) {
+  public ThreeWheelOdometryWrapper setLeftEncoder(DcMotor encoder) {
     this._leftEncoder = encoder;
     encoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     encoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     return this;
   }
   
-  public OdometryWrapper setRightEncoder(DcMotor encoder) {
+  public ThreeWheelOdometryWrapper setRightEncoder(DcMotor encoder) {
     this._rightEncoder = encoder;
     encoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     encoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     return this;
   }
   
-  public OdometryWrapper setFrontEncoder(DcMotor encoder) {
+  public ThreeWheelOdometryWrapper setFrontEncoder(DcMotor encoder) {
     this._frontEncoder = encoder;
     encoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     encoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     return this;
   }
   
-  public OdometryWrapper setTrackWidth(double _trackWidth) {
-    this._trackWidth = _trackWidth / OdometryWrapper.INCHES_TO_TICKS;
+  public ThreeWheelOdometryWrapper setTrackWidth(double _trackWidth) {
+    this._trackWidth = _trackWidth / ThreeWheelOdometryWrapper.INCHES_TO_TICKS;
     return this;
   }
   
-  public OdometryWrapper setForwardOffset(double _forwardOffset) {
-    this._forwardOffset = _forwardOffset / OdometryWrapper.INCHES_TO_TICKS;
+  public ThreeWheelOdometryWrapper setForwardOffset(double _forwardOffset) {
+    this._forwardOffset = _forwardOffset / ThreeWheelOdometryWrapper.INCHES_TO_TICKS;
     return this;
   }
 
-  public OdometryWrapper subscribePoseEvent(PoseEventHandler eventHandler) {
+  public ThreeWheelOdometryWrapper subscribePoseEvent(PoseEventHandler eventHandler) {
     this.poseEventHandlers.add(eventHandler);
     return this;
   }
@@ -147,8 +147,8 @@ public class OdometryWrapper {
     double phi = (double) (this._leftEncoderDelta - this._rightEncoderDelta) / this._trackWidth;
     double paraDelta = (double) (this._leftEncoderDelta + this._rightEncoderDelta) / 2;
     double perpDelta = this._frontEncoderDelta - this._forwardOffset * phi;
-    this._x -= (paraDelta * Math.sin(this._r) + perpDelta * Math.cos(this._r)) / OdometryWrapper.INCHES_TO_TICKS;
-    this._y += (paraDelta * Math.cos(this._r) - perpDelta * Math.sin(this._r)) / OdometryWrapper.INCHES_TO_TICKS;
+    this._x -= (paraDelta * Math.sin(this._r) + perpDelta * Math.cos(this._r)) / ThreeWheelOdometryWrapper.INCHES_TO_TICKS;
+    this._y += (paraDelta * Math.cos(this._r) - perpDelta * Math.sin(this._r)) / ThreeWheelOdometryWrapper.INCHES_TO_TICKS;
     this._r += phi;
     for (int i = poseEventHandlers.size() - 1; i >= 0; i--) {
       PoseEventHandler poseEventHandler = this.poseEventHandlers.get(i);
