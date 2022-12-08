@@ -33,22 +33,26 @@ public class TwoWheelOdometryWrapper {
     this._r = 0.0;
     this.poseEventHandlers = new ArrayList<PoseEventHandler>();
   }
+
+  public static interface PoseEventHandler {
+    public boolean execute(double x, double y, double r);
+  }
   
-  public TwoWheelOdometry setParaEncoder(DcMotor encoder) {
+  public TwoWheelOdometryWrapper setParaEncoder(DcMotor encoder) {
     this._paraEncoder = encoder;
     encoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     encoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     return this;
   }
   
-  public TwoWheelOdometry setPerpEncoder(DcMotor encoder) {
+  public TwoWheelOdometryWrapper setPerpEncoder(DcMotor encoder) {
     this._perpEncoder = encoder;
     encoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     encoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     return this;
   }
   
-  public TwoWheelOdometry setImu(BNO055IMU imu) {
+  public TwoWheelOdometryWrapper setImu(BNO055IMU imu) {
     this._imu = imu;
     return this;
   }
@@ -58,7 +62,7 @@ public class TwoWheelOdometryWrapper {
     return this;
   }
   
-  public TwoWheelOdometry setPerpOffset(double offset) {
+  public TwoWheelOdometryWrapper setPerpOffset(double offset) {
     this._perpOffset = offset * TwoWheelOdometryWrapper.INCHES_TO_TICKS;
     return this;
   }
@@ -106,8 +110,8 @@ public class TwoWheelOdometryWrapper {
   }
   
   private void updatePose() {
-    double paraDelta = this._paraEncoderDelta - this.paraOffset * this._imuDelta;
-    double perpDelta = this._perpEncoderDelta + this.perpOffset * this._imuDelta;
+    double paraDelta = this._paraDelta - this._paraOffset * this._imuDelta;
+    double perpDelta = this._perpDelta + this._perpOffset * this._imuDelta;
     this._x += (paraDelta * Math.cos(this._r) - perpDelta * Math.sin(this._r)) / TwoWheelOdometryWrapper.INCHES_TO_TICKS;
     this._y += (paraDelta * Math.sin(this._r) + perpDelta * Math.cos(this._r)) / TwoWheelOdometryWrapper.INCHES_TO_TICKS;
     this._r = this._imuPosition;
