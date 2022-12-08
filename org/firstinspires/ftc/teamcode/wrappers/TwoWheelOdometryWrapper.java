@@ -95,7 +95,7 @@ public class TwoWheelOdometryWrapper {
     AngleUnit angleUnit = AngleUnit.RADIANS;
     Orientation orientation = this.imu.getAngularOrientation(axesReference, axesOrder, angleUnit);
     double nowImuPosition = orientation.firstAngle;
-    this._imuDelta = nowImuPositionn - this._imuPosition;
+    this._imuDelta = nowImuPosition - this._imuPosition;
     this._imuPosition = nowImuPosition;
   }
   
