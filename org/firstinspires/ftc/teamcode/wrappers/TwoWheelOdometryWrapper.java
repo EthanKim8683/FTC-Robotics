@@ -14,10 +14,8 @@ public class TwoWheelOdometryWrapper {
   private DcMotor _paraEncoder;
   private DcMotor _perpEncoder;
   private BNO055IMU _imu;
-  private double _paraOffsetX;
-  private double _paraOffsetY;
-  private double _perpOffsetX;
-  private double _perpOffsetY;
+  private double _paraOffset;
+  private double _perpOffset;
   private int _paraPosition;
   private int _perpPosition;
   private double _imuPosition;
@@ -49,23 +47,13 @@ public class TwoWheelOdometryWrapper {
     return this;
   }
   
-  public TwoWheelOdometry setParaOffsetX(double x) {
-    this._paraOffsetX = x;
+  public TwoWheelOdometry setParaOffset(double offset) {
+    this._paraOffset = offset;
     return this;
   }
   
-  public TwoWheelOdometry setParaOffsetY(double y) {
-    this._paraOffsetY = y;
-    return this;
-  }
-  
-  public TwoWheelOdometry setPerpOffsetX(double x) {
-    this._perpOffsetX = x;
-    return this;
-  }
-  
-  public TwoWheelOdometry setPerpOffsetY(double y) {
-    this._perpOffsetY = y;
+  public TwoWheelOdometry setPerpOffset(double offset) {
+    this._perpOffset = offset;
     return this;
   }
   
@@ -81,20 +69,12 @@ public class TwoWheelOdometryWrapper {
     return this._imu;
   }
   
-  public int getParaOffsetX() {
-    return this_paraOffsetX;
+  public int getParaOffset() {
+    return this_paraOffset;
   }
   
-  public int getParaOffsetY() {
-    return this_paraOffsetY;
-  }
-  
-  public int getPerpOffsetX() {
-    return this_perpOffsetX;
-  }
-  
-  public int getPerpOffsetY() {
-    return this_perpOffsetY;
+  public int getPerpOffset() {
+    return this_perpOffset;
   }
   
   private void updateParaEncoder() {
@@ -120,8 +100,8 @@ public class TwoWheelOdometryWrapper {
   }
   
   private void updatePose() {
-    double paraDelta = this._paraEncoderDelta - this.paraOffsetX * this._imuDelta;
-    double perpDelta = this._perpEncoderDelta + this.perpOffsetY * this._imuDelta;
+    double paraDelta = this._paraEncoderDelta - this.paraOffset * this._imuDelta;
+    double perpDelta = this._perpEncoderDelta + this.perpOffset * this._imuDelta;
     this._x += (paraDelta * Math.cos(this._r) - perpDelta * Math.sin(this._r)) / TwoWheelOdometryWrapper.INCHES_TO_TICKS;
     this._y += (paraDelta * Math.sin(this._r) + perpDelta * Math.cos(this._r)) / TwoWheelOdometryWrapper.INCHES_TO_TICKS;
     this._r = this._imuPosition;
