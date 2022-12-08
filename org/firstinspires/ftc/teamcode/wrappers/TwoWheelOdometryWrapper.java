@@ -69,7 +69,7 @@ public class TwoWheelOdometryWrapper {
         return this;
     }
 
-    public ThreeWheelOdometryWrapper subscribePoseEvent(PoseEventHandler eventHandler) {
+    public TwoWheelOdometryWrapper subscribePoseEvent(PoseEventHandler eventHandler) {
         this.poseEventHandlers.add(eventHandler);
         return this;
     }
