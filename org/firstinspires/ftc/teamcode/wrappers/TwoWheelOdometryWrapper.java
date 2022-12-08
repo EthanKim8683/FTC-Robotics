@@ -25,20 +25,26 @@ public class TwoWheelOdometryWrapper {
   private double _x;
   private double _y;
   private double _r;
+  private ArrayList<PoseEventHandler> poseEventHandlers;
   
   public TwoWheelOdometryWrapper() {
     this._x = 0.0;
     this._y = 0.0;
     this._r = 0.0;
+    this.poseEventHandlers = new ArrayList<PoseEventHandler>();
   }
   
   public TwoWheelOdometry setParaEncoder(DcMotor encoder) {
     this._paraEncoder = encoder;
+    encoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    encoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     return this;
   }
   
   public TwoWheelOdometry setPerpEncoder(DcMotor encoder) {
     this._perpEncoder = encoder;
+    encoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    encoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     return this;
   }
   
@@ -48,12 +54,12 @@ public class TwoWheelOdometryWrapper {
   }
   
   public TwoWheelOdometry setParaOffset(double offset) {
-    this._paraOffset = offset;
+    this._paraOffset = offset * TwoWheelOdometryWrapper.INCHES_TO_TICKS;
     return this;
   }
   
   public TwoWheelOdometry setPerpOffset(double offset) {
-    this._perpOffset = offset;
+    this._perpOffset = offset * TwoWheelOdometryWrapper.INCHES_TO_TICKS;
     return this;
   }
   
@@ -105,6 +111,10 @@ public class TwoWheelOdometryWrapper {
     this._x += (paraDelta * Math.cos(this._r) - perpDelta * Math.sin(this._r)) / TwoWheelOdometryWrapper.INCHES_TO_TICKS;
     this._y += (paraDelta * Math.sin(this._r) + perpDelta * Math.cos(this._r)) / TwoWheelOdometryWrapper.INCHES_TO_TICKS;
     this._r = this._imuPosition;
+    for (int i = poseEventHandlers.size() - 1; i >= 0; i--) {
+      PoseEventHandler poseEventHandler = this.poseEventHandlers.get(i);
+      if (poseEventHandler.execute(this._x, this._y, this._r)) this.poseEventHandlers.remove(i);
+    }
   }
   
   public void update() {
