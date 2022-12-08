@@ -55,12 +55,12 @@ public class ThreeWheelOdometryWrapper {
   }
   
   public ThreeWheelOdometryWrapper setTrackWidth(double _trackWidth) {
-    this._trackWidth = _trackWidth / ThreeWheelOdometryWrapper.INCHES_TO_TICKS;
+    this._trackWidth = _trackWidth * ThreeWheelOdometryWrapper.INCHES_TO_TICKS;
     return this;
   }
   
   public ThreeWheelOdometryWrapper setForwardOffset(double _forwardOffset) {
-    this._forwardOffset = _forwardOffset / ThreeWheelOdometryWrapper.INCHES_TO_TICKS;
+    this._forwardOffset = _forwardOffset * ThreeWheelOdometryWrapper.INCHES_TO_TICKS;
     return this;
   }
 
@@ -102,7 +102,7 @@ public class ThreeWheelOdometryWrapper {
   }
 
   public int getFrontEncoderPosition() {
-    return this._rightEncoderPosition;
+    return this._frontEncoderPosition;
   }
 
   public int getLeftEncoderDelta() {
