@@ -69,6 +69,11 @@ public class TwoWheelOdometryWrapper {
         return this;
     }
 
+    public ThreeWheelOdometryWrapper subscribePoseEvent(PoseEventHandler eventHandler) {
+        this.poseEventHandlers.add(eventHandler);
+        return this;
+    }
+
     public DcMotor getParaEncoder() {
         return this._paraEncoder;
     }
