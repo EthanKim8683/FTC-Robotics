@@ -120,8 +120,6 @@ public class TwoWheelOdometryWrapper {
   }
   
   private void updatePose() {
-    double paraRadius = Math.hypot(this._paraOffsetX, this._paraOffsetY);
-    double perpRadius = Math.hypot(this._perpOffsetX, this._perpOffsetY);
     double paraDelta = this._paraEncoderDelta - this.paraOffsetX * this._imuDelta;
     double perpDelta = this._perpEncoderDelta + this.perpOffsetY * this._imuDelta;
     this._x += (paraDelta * Math.cos(this._r) - perpDelta * Math.sin(this._r)) / TwoWheelOdometryWrapper.INCHES_TO_TICKS;
